@@ -132,7 +132,7 @@ public class vehicle {
         float d = desired.mag();                         //
         desired.normalize();                             //
         if (d<100) {
-            float m = map(d,0,100,0,maxSpeed); //edit range here
+            float m = map(d,0,100,0,maxSpeed); //edit range here, should be smaller than follow(); predict modifier
             desired.mult(m);
             //System.out.println("Slowing speed");
         } else {
