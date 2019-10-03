@@ -1,26 +1,26 @@
 import processing.core.PVector;
 import processing.core.*;
-
+import static processing.core.PApplet.map;
 
 public class vehicle {
     PApplet parent;
     PVector location;
     PVector velocity;
     PVector acceleration;
-    PVector mytarget;
+    PVector myTarget;
     PVector steer;
-    float r = 6;
-    float maxSpeed = 3;
-    float maxAcceleration = 0.05f;
-    int score = 0;
-    int colour = 177;
+    float r                 = 6;
+    float maxSpeed          = 3;
+    float maxAcceleration   = 0.05f;
+    int score               = 0;
+    int colour              = 177;
 
     public vehicle(float x, float y, float t_x, float t_y) {
-        location = new PVector(x, y);
-        velocity = new PVector(0, 0);
-        acceleration = new PVector(0, 0);
-        mytarget = new PVector(t_x, t_y);
-        steer = new PVector(0, 0);
+        location        = new PVector(x, y);
+        velocity        = new PVector(0, 0);
+        acceleration    = new PVector(0, 0);
+        myTarget        = new PVector(t_x, t_y);
+        steer           = new PVector(0, 0);
     }
 
     void setParent(PApplet p) {
@@ -40,24 +40,21 @@ public class vehicle {
     void update() {
         //Update velocity from acceleration
         //Update location from velocity
-        if (location.dist(mytarget) < maxSpeed) {
+        if (location.dist(myTarget) < maxSpeed) {
             this.score = this.score + 1;
-            mytarget.x = (float) (Math.random() * 1200);
-            mytarget.y = (float) (Math.random() * 720);
+            myTarget.x = (float) (Math.random() * 1200);
+            myTarget.y = (float) (Math.random() * 720);
             //velocity.mult(0);
         } else {
             //velocity.y=(float) 0.9;
             //seek();
-
         }
-
         velocity.add(acceleration);
         velocity.limit(maxSpeed);
         location.add(velocity);
         acceleration.mult(0); //As the acceleration force has been applied we set the acceleration back to 0
         if (location.x > 1200) {
             location.x = 1;
-
         }
         if (location.x < 0) {
             location.x = 1200;
@@ -69,12 +66,11 @@ public class vehicle {
         if (location.y < 0) {
             location.y = 720;
         }
-
         //System.out.println(location);
     }
-
     // A function to get the normal point from a point (p) to a line segment (a-b)
     // This function could be optimized to make fewer new Vector objects
+
     PVector getNormalPoint(PVector p, PVector a, PVector b) {
         // Vector from a to p
         PVector ap = PVector.sub(p, a);
@@ -88,11 +84,10 @@ public class vehicle {
     }
 
     void follow(Path p) {
-
         // Predict location 50 (arbitrary choice) frames ahead
         PVector predict = velocity.get();
         predict.normalize();
-        predict.mult(50);
+        predict.mult(110); //How far ahead location is on the path, should be farther than the arrival modifier
         PVector predictLoc = PVector.add(location, predict);
 
         // Look at the line segment
@@ -103,7 +98,7 @@ public class vehicle {
         PVector normalPoint = getNormalPoint(predictLoc, a, b);
 
         // Find target point a little further ahead of normal
-        PVector dir = PVector.sub(b, a);
+        PVector dir = PVector.sub(b, a); //Sets the direction of the path from b to a
         dir.normalize();
         dir.mult(10);  // This could be based on velocity instead of just an arbitrary 10 pixels
         PVector targetn = PVector.add(normalPoint, dir);
@@ -121,8 +116,6 @@ public class vehicle {
     }
 
     void seek(PVector target) {
-
-
         PVector desired = PVector.sub(target, location); //Creates a vector between current location and target location
         desired.normalize(); //Sets the vector length to 1
         desired.mult(maxSpeed); //Multiplies the vector to be maxSpeed as length
@@ -130,10 +123,24 @@ public class vehicle {
         PVector steer = PVector.sub(desired, velocity);
         steer.limit(maxAcceleration);
         applyForce(steer);
-
-
+        arrive(target);
     }
-
+    void arrive(PVector target){
+        PVector desired = PVector.sub(target,location);  //see seek
+        float d = desired.mag();                         //
+        desired.normalize();                             //
+        if (d<100) {                                             //edit range here
+            float m = map(d,0,1,0,maxSpeed); //Shows where or how much it should slow down per rage (d)
+            desired.mult(m);
+            System.out.println("Slowing speed");
+            System.out.println(m);
+        } else {
+            desired.mult(maxSpeed);
+        }
+        PVector steer = PVector.sub(desired, velocity); //see seek
+        steer.limit(maxAcceleration);                   //
+        applyForce(steer);                              //
+    }
     void run() {
         update();
         display();
@@ -143,7 +150,7 @@ public class vehicle {
         // Draw a triangle rotated in the direction of velocity
         float theta = (float) (velocity.heading2D() + Math.PI / 2);
         parent.fill(this.colour);
-        parent.stroke(0);
+        parent.stroke(0,255);
         parent.strokeWeight(1);
         parent.pushMatrix();
         parent.translate(location.x, location.y);
@@ -155,8 +162,5 @@ public class vehicle {
         parent.endShape();
         parent.popMatrix();
         //parent.ellipse(target.x, target.y, 3, 3);
-
     }
-
-
 }
