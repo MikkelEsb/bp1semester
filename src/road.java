@@ -1,20 +1,23 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 
+import processing.core.PApplet;
 import processing.core.PVector;
 
 
 public class road {
     //We define the road as points in an array
+    PApplet parent;
     ArrayList<PVector> points;
     //Each point is the entry/exit of the road.
     ArrayList<lane> lanes;
-    ArrayList<connection> connections;
+    LinkedList<connection> connections;
 
 
     public road() {
         points = new ArrayList<PVector>();
         lanes = new ArrayList<lane>();
-        connections = new ArrayList<connection>();
+        connections = new LinkedList<connection>();
         //On construction we create the arraylist which contains the points
 
     }
@@ -44,7 +47,7 @@ public class road {
         return lanes;
     }
 
-    public ArrayList<connection> getConnections() {
+    public LinkedList<connection> getConnections() {
         return connections;
     }
 
@@ -56,7 +59,7 @@ public class road {
         this.lanes = lanes;
     }
 
-    public void setConnections(ArrayList<connection> connections) {
+    public void setConnections(LinkedList<connection> connections) {
         this.connections = connections;
     }
 
@@ -68,6 +71,7 @@ public class road {
     }
 
     void addLane(float x, float y) {
+        //Adds the velocity vector for the lane
         lane newLane = new lane(x, y);
         lanes.add(newLane);
     }
@@ -82,6 +86,16 @@ public class road {
 
     PVector getEnd() {
         return getNPoint(points.size() - 1);
+    }
+    void setParent(PApplet p) {
+        parent = p;
+    }
+    void display() {
+
+        parent.strokeWeight(5);
+        parent.stroke(0, 100);
+        parent.line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);
+
     }
 }
 

@@ -1,15 +1,17 @@
 import processing.core.PVector;
 import processing.core.*;
 
+import static processing.core.PApplet.map;
+
 
 public class vehicle {
     PApplet parent;
     PVector location;
     PVector velocity;
     PVector acceleration;
-    PVector mytarget;
+    PVector myTarget;
     PVector steer;
-    float r = 6;
+    float r = 4;
     float maxSpeed = 3;
     float maxAcceleration = 0.05f;
     int score = 0;
@@ -19,7 +21,7 @@ public class vehicle {
         location = new PVector(x, y);
         velocity = new PVector(0, 0);
         acceleration = new PVector(0, 0);
-        mytarget = new PVector(t_x, t_y);
+        myTarget = new PVector(t_x, t_y);
         steer = new PVector(0, 0);
     }
 
@@ -40,10 +42,10 @@ public class vehicle {
     void update() {
         //Update velocity from acceleration
         //Update location from velocity
-        if (location.dist(mytarget) < maxSpeed) {
+        if (location.dist(myTarget) < maxSpeed) {
             this.score = this.score + 1;
-            mytarget.x = (float) (Math.random() * 1200);
-            mytarget.y = (float) (Math.random() * 720);
+            myTarget.x = (float) (Math.random() * 1200);
+            myTarget.y = (float) (Math.random() * 720);
             //velocity.mult(0);
         } else {
             //velocity.y=(float) 0.9;
@@ -86,7 +88,36 @@ public class vehicle {
         PVector normalPoint = PVector.add(a, ab);
         return normalPoint;
     }
+    float VelocityToDinstance(float v1, float v2){
+        return (v1*v1+v2*v2)/(2*maxAcceleration);
+    }
+    void followRoad(road CurRoad,lane desiredLane){
+        PVector a = CurRoad.getNPoint(0);
+        PVector b = CurRoad.getNPoint(1);
+        PVector predictLoc = velocity.get();
+        predictLoc.normalize();
+        predictLoc.mult(50);
+        predictLoc.add(location);
+        System.out.println(predictLoc); //debugging
 
+        PVector normalPoint = getNormalPoint(predictLoc,a,b);
+        
+
+        float distance = PVector.dist(predictLoc, normalPoint);
+        System.out.println(distance);
+        if (distance > 10) { //TODO change 5 to a number that makes sense in regard to where the specific lane is on the road.
+            PVector t=desiredLane.direction.get();
+            PVector yolo=PVector.add(normalPoint,t.mult(10));
+            System.out.println("We seekin bro");
+            seek(yolo);
+
+        }else{
+            acceleration.set(desiredLane.direction);
+            acceleration.setMag(maxAcceleration);
+        }
+
+
+    }
     void follow(Path p) {
 
         // Predict location 50 (arbitrary choice) frames ahead
@@ -113,7 +144,11 @@ public class vehicle {
         // Only if the distance is greater than the path's radius do we bother to steer
         if (distance > p.radius) {
             seek(targetn);
+        }else{
+            acceleration.set(velocity);
+            acceleration.setMag(maxAcceleration);
         }
+
     }
 
     void applyForce(PVector force) {
@@ -130,9 +165,24 @@ public class vehicle {
         PVector steer = PVector.sub(desired, velocity);
         steer.limit(maxAcceleration);
         applyForce(steer);
-
-
+        arrive(target);
     }
+
+    void arrive(PVector target){
+        PVector desired = PVector.sub(target,location);  //see seek
+        float d = desired.mag();                         //
+        desired.normalize();                             //
+        if (d<200) {
+            float m = map(d,0,200,0,maxSpeed); //edit range here
+            desired.mult(m);
+        } else {
+            desired.mult(maxSpeed);
+        }
+        PVector steer = PVector.sub(desired, velocity); //see seek
+        steer.limit(maxAcceleration);                   //
+        applyForce(steer);                              //
+    }
+
 
     void run() {
         update();

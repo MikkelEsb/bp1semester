@@ -5,6 +5,7 @@ public class core extends PApplet {
     vehicle TestOne = new vehicle(1, 3, 150, 75);
     vehicle TestTwo = new vehicle(150, 30, 20, 11);
     vehicle TestThree = new vehicle(40, 200, 550, 95);
+    road testRoad = new road();
     Path path;
 
     public static void main(String[] args) {
@@ -31,6 +32,15 @@ public class core extends PApplet {
         TestOne.setParent(this);
         TestOne.setVelocity(1, 1);
         TestOne.follow(path);
+
+        testRoad.addPoint(1,1);
+        testRoad.addPoint(500*2,500);
+        testRoad.addLane(1,1/2);
+        testRoad.setParent(this);
+        TestTwo.setParent(this);
+        TestTwo.setVelocity(1,1);
+        TestTwo.colour=0;
+        TestTwo.followRoad(testRoad,testRoad.lanes.get(0));
 		/*TestTwo.setParent(this);
 		TestTwo.maxSpeed=7;
 		TestTwo.setVelocity(2, 1);
@@ -54,8 +64,10 @@ public class core extends PApplet {
         TestOne.follow(path);
         TestOne.run();
 
-		/*TestTwo.update();
-		TestTwo.display();
+        testRoad.display();
+        TestTwo.followRoad(testRoad,testRoad.lanes.get(0));
+        TestTwo.run();
+		/*
 		TestThree.update();
 		TestThree.display();
 		*/
