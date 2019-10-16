@@ -3,6 +3,7 @@ import processing.core.*;
 
 import static processing.core.PApplet.map;
 
+
 public class vehicle {
     PApplet parent;
     PVector location;
@@ -49,13 +50,16 @@ public class vehicle {
         } else {
             //velocity.y=(float) 0.9;
             //seek();
+
         }
+
         velocity.add(acceleration);
         velocity.limit(maxSpeed);
         location.add(velocity);
         acceleration.mult(0); //As the acceleration force has been applied we set the acceleration back to 0
         if (location.x > 1200) {
             location.x = 1;
+
         }
         if (location.x < 0) {
             location.x = 1200;
@@ -67,11 +71,12 @@ public class vehicle {
         if (location.y < 0) {
             location.y = 720;
         }
+
         //System.out.println(location);
     }
+
     // A function to get the normal point from a point (p) to a line segment (a-b)
     // This function could be optimized to make fewer new Vector objects
-
     PVector getNormalPoint(PVector p, PVector a, PVector b) {
         // Vector from a to p
         PVector ap = PVector.sub(p, a);
@@ -85,10 +90,11 @@ public class vehicle {
     }
 
     void follow(Path p) {
+
         // Predict location 50 (arbitrary choice) frames ahead
         PVector predict = velocity.get();
         predict.normalize();
-        predict.mult(110); //How far ahead location is on the path, should be farther than the arrival modifier
+        predict.mult(50);
         PVector predictLoc = PVector.add(location, predict);
 
         // Look at the line segment
@@ -117,6 +123,8 @@ public class vehicle {
     }
 
     void seek(PVector target) {
+
+
         PVector desired = PVector.sub(target, location); //Creates a vector between current location and target location
         desired.normalize(); //Sets the vector length to 1
         desired.mult(maxSpeed); //Multiplies the vector to be maxSpeed as length
@@ -132,9 +140,8 @@ public class vehicle {
         float d = desired.mag();                         //
         desired.normalize();                             //
         if (d<100) {
-            float m = map(d,0,100,0,maxSpeed); //edit range here, should be smaller than follow(); predict modifier
+            float m = map(d,0,100,0,maxSpeed); //edit range here
             desired.mult(m);
-            //System.out.println("Slowing speed");
         } else {
             desired.mult(maxSpeed);
         }
@@ -142,6 +149,7 @@ public class vehicle {
         steer.limit(maxAcceleration);                   //
         applyForce(steer);                              //
     }
+
 
     void run() {
         update();
@@ -164,5 +172,8 @@ public class vehicle {
         parent.endShape();
         parent.popMatrix();
         //parent.ellipse(target.x, target.y, 3, 3);
+
     }
+
+
 }
