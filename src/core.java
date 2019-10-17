@@ -1,5 +1,6 @@
 import processing.core.PApplet;
-import processing.core.PVector;
+
+
 
 public class core extends PApplet {
     vehicle TestOne = new vehicle(1, 3, 150, 75);
@@ -63,7 +64,6 @@ public class core extends PApplet {
         path.display();
         TestOne.follow(path);
         TestOne.run();
-
         testRoad.display();
         TestTwo.followRoad(testRoad,testRoad.lanes.get(0));
         TestTwo.run();
@@ -74,6 +74,10 @@ public class core extends PApplet {
         //stroke(0);
 
         //rect(Test.location.x,Test.location.y,20,30);
+        int m = millis();
+        textSize(32);
+        int s = m/1000;
+        text("Seconds elasped " + s, 10, 30);
     }
 
 }
