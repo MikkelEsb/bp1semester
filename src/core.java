@@ -88,17 +88,23 @@ public class core extends PApplet {
         secondRoad.display();
         thirdRoad.display();
         TestTwo.run();
-		/*
+        clock();
+        /*
 		TestThree.update();
 		TestThree.display();
 		*/
         //stroke(0);
 
         //rect(Test.location.x,Test.location.y,20,30);
-        int m = millis();          		//Time in miliseconds since program start
+
+    }
+
+    private void clock(){
+        int m = millis();
         textSize(32);
-        int s = m/1000; 			//Milliseconds converted to seconds
-        text("Seconds elasped " + s, 10, 30);   //Print in draw the time elapsed
+        int s = m/1000;
+        text("Seconds elasped " + s, 10, 30);
+
     }
 
 }
