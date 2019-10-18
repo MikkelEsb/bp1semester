@@ -1,12 +1,13 @@
 import processing.core.PApplet;
 
+import java.util.ArrayList;
 
 
 public class core extends PApplet {
-    vehicle TestOne = new vehicle(1, 3, 150, 75);
-    vehicle TestTwo = new vehicle(150, 30, 20, 11);
+    vehicle TestOne   = new vehicle(1, 3, 150, 75);
+    vehicle TestTwo   = new vehicle(150, 30, 20, 11);
     vehicle TestThree = new vehicle(40, 200, 550, 95);
-    road testRoad = new road();
+    road testRoad     = new road();
     Path path;
 
     public static void main(String[] args) {
@@ -67,17 +68,25 @@ public class core extends PApplet {
         testRoad.display();
         TestTwo.followRoad(testRoad,testRoad.lanes.get(0));
         TestTwo.run();
-		/*
+        clock();
+        /*
 		TestThree.update();
 		TestThree.display();
 		*/
         //stroke(0);
 
         //rect(Test.location.x,Test.location.y,20,30);
-        int m = millis();          		//Time in miliseconds since program start
-        textSize(32);
-        int s = m/1000; 			//Milliseconds converted to seconds
-        text("Seconds elasped " + s, 10, 30);   //Print in draw the time elapsed
+
     }
+
+    private void clock(){
+        int m = millis();
+        textSize(32);
+        int s = m/1000;
+        text("Seconds elasped " + s, 10, 30);
+
+    }
+
+
 
 }
