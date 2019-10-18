@@ -1,12 +1,14 @@
 import processing.core.PApplet;
-
+import processing.core.PVector;
 
 
 public class core extends PApplet {
     vehicle TestOne = new vehicle(1, 3, 150, 75);
-    vehicle TestTwo = new vehicle(150, 30, 20, 11);
+    vehicle TestTwo = new vehicle(150, 30, 1000, 500);
     vehicle TestThree = new vehicle(40, 200, 550, 95);
     road testRoad = new road();
+    road secondRoad = new road();
+    road thirdRoad = new road();
     Path path;
 
     public static void main(String[] args) {
@@ -35,13 +37,31 @@ public class core extends PApplet {
         TestOne.follow(path);
 
         testRoad.addPoint(1,1);
-        testRoad.addPoint(500*2,500);
+        testRoad.addPoint(500,200);
         testRoad.addLane(1,1/2);
         testRoad.setParent(this);
+
+        secondRoad.addPoint(500,200);
+        secondRoad.addPoint(10,700);
+        secondRoad.generateLanes(3,2);
+        secondRoad.setParent(this);
+
+        thirdRoad.addPoint(500,200);
+        thirdRoad.addPoint(1000,700);
+        thirdRoad.generateLanes(3,2);
+        thirdRoad.setParent(this);
+
+        testRoad.setConnection(new PVector(500,200),secondRoad);
+        secondRoad.setConnection(new PVector(500,200),testRoad);
+
+        testRoad.setConnection(new PVector(500,200),thirdRoad);
+
+
         TestTwo.setParent(this);
         TestTwo.setVelocity(1,1);
         TestTwo.colour=0;
-        TestTwo.followRoad(testRoad,testRoad.lanes.get(0));
+        TestTwo.setRoad(testRoad,testRoad.lanes.get(0));
+        //TestTwo.followRoad(testRoad,testRoad.lanes.get(0));
 		/*TestTwo.setParent(this);
 		TestTwo.maxSpeed=7;
 		TestTwo.setVelocity(2, 1);
@@ -65,7 +85,8 @@ public class core extends PApplet {
         TestOne.follow(path);
         TestOne.run();
         testRoad.display();
-        TestTwo.followRoad(testRoad,testRoad.lanes.get(0));
+        secondRoad.display();
+        thirdRoad.display();
         TestTwo.run();
 		/*
 		TestThree.update();

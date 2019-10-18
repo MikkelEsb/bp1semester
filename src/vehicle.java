@@ -11,6 +11,8 @@ public class vehicle {
     PVector acceleration;
     PVector myTarget;
     PVector steer;
+    road myRoad;
+    lane myLane;
     float r = 4;
     float maxSpeed = 3;
     float maxAcceleration = 0.05f;
@@ -91,24 +93,95 @@ public class vehicle {
     float VelocityToDinstance(float v1, float v2){
         return (v1*v1+v2*v2)/(2*maxAcceleration);
     }
+    lane getBestLaneToTarget(road tempRoad){
+        float shortestDist=100000;
+        int laneNum=-1;
+        for (int i=0; i<tempRoad.lanes.size();i++){
+            PVector dirWithLoc = tempRoad.lanes.get(i).direction.get();
+            dirWithLoc.add(location);
+            float tDist = dirWithLoc.dist(myTarget);
+            if (tDist<shortestDist){
+                shortestDist=tDist;
+                laneNum=i;
+            }
+        }
+        if (laneNum==-1){
+            System.out.println("Shiit man -1 laneNum");
+        }
+        return tempRoad.lanes.get(laneNum);
+    }
+    road getNextRoad(connection ourConnections,PVector currentPoint){
+        float shortestDist=100000; //Big distance, should be easy to beat ;)
+        int bestRoad=-1; //Initially set value to something that's not possible to later check if we got a valid value.
+        int nCheck;
+        //We loop through all roads to our connection
+        for (int i = 0; i < ourConnections.connectingRoads.size(); i++){
+            //Then we check if our first point in the road is equals to the point we're checking from.
+            if (ourConnections.connectingRoads.get(i).getNPoint(0).equals(currentPoint)){
+                //If the point we're at is the same as the point we're looking at then we're interested in the opposite point (assuming we only have 2 points).
+                nCheck=1;
+
+            }
+            else{
+                nCheck=0;
+            }
+            //We check the distance between our desired point to our current target.
+            float dis=ourConnections.connectingRoads.get(i).getNPoint(nCheck).dist(myTarget);
+            if (dis<shortestDist){
+                //If our distance is shorter than the current best then we conclude that this is the best road for now.
+                shortestDist=dis;
+                bestRoad=i;
+            }
+        }
+        if (bestRoad!=-1){
+
+
+        }else{
+            System.out.println("We couldn't find a road woopsies dis is baaad");
+
+        }
+        return ourConnections.connectingRoads.get(bestRoad);
+    }
+
     void followRoad(road CurRoad,lane desiredLane){
+        if (CurRoad==null){
+            return;
+        }
         PVector a = CurRoad.getNPoint(0);
         PVector b = CurRoad.getNPoint(1);
         PVector predictLoc = velocity.get();
         predictLoc.normalize();
         predictLoc.mult(50);
         predictLoc.add(location);
-        System.out.println(predictLoc); //debugging
-
+        //System.out.println(predictLoc); //debugging
+        float adist=a.dist(location);
+        float bdist=b.dist(location);
+       /* if(adist<=(velocity.mag()+20)){
+            connection newCon           = CurRoad.getConnection(a);
+            if (newCon!=null) {
+                road nextRoad = getNextRoad(newCon, a);
+                this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
+                System.out.println("new road set a");
+            }
+        }*/
+        if(bdist<=(velocity.mag()+20)) {
+            connection newCon = CurRoad.getConnection(b);
+            if (newCon!=null) { //Sometimes we don't actually have any connections so we have to handle this edge case.
+                road nextRoad = getNextRoad(newCon, b);
+                getBestLaneToTarget(nextRoad);
+                this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
+                System.out.println("new road set b");
+            }
+        }
         PVector normalPoint = getNormalPoint(predictLoc,a,b);
-        
+
 
         float distance = PVector.dist(predictLoc, normalPoint);
-        System.out.println(distance);
+        //System.out.println(distance);
         if (distance > 10) { //TODO change 5 to a number that makes sense in regard to where the specific lane is on the road.
             PVector t=desiredLane.direction.get();
             PVector yolo=PVector.add(normalPoint,t.mult(10));
-            System.out.println("We seekin bro");
+            //System.out.println("We seekin bro");
             seek(yolo);
 
         }else{
@@ -182,9 +255,14 @@ public class vehicle {
         steer.limit(maxAcceleration);                   //
         applyForce(steer);                              //
     }
+    void setRoad(road newRoad,lane newLane){
+        myRoad=newRoad;
+        myLane=newLane;
+    }
 
 
     void run() {
+        followRoad(myRoad,myLane);
         update();
         display();
     }
@@ -204,6 +282,7 @@ public class vehicle {
         parent.vertex(r, r * 2);
         parent.endShape();
         parent.popMatrix();
+        parent.ellipse(myTarget.x,myTarget.y,5,5);
         //parent.ellipse(target.x, target.y, 3, 3);
 
     }

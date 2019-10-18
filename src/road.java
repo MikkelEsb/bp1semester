@@ -31,6 +31,7 @@ public class road {
 
     connection getConnection(PVector connectingPlace) {
         for (int i = 0; i < connections.size(); i++) {
+
             if (connections.get(i).connectingPoint.dist(connectingPlace) < 1) { //crudely using distance of 1 as the way to figure out if connecting
                 return connections.get(i);
             }
@@ -64,9 +65,46 @@ public class road {
     }
 
     void setConnection(PVector connectingPlace, road connectingRoad) {
-        connection newCon = new connection(connectingPlace);
-        connections.add(newCon);
+
+        boolean hasSameConnection=false;
+        int connectionNum=-1;
+        for (int i=0; i<connections.size() && !hasSameConnection;i++){
+            if(connections.get(i).connectingPoint.equals(connectingPlace)){
+                hasSameConnection=true;
+                connectionNum=i;
+            }
+        }
+        if (hasSameConnection) {
+            connections.get(connectionNum).addRoad(connectingRoad);
+        }else{
+            connection newCon = new connection(connectingPlace);
+            connections.add(newCon);
+            connections.getLast().addRoad(connectingRoad);
+        }
+
+
         //connections.get(0).addRoad(connectingRoad);//TODO BAD
+
+    }
+    void generateLanes(float speed,int desiredLanes){
+
+        if (desiredLanes%2!=0){
+            System.out.println("Grr use numbers divisible by 2");
+        }
+        PVector a = this.getStart().get();
+        PVector b = this.getEnd().get();
+        PVector ab = a.sub(b);
+        ab.setMag(speed);
+        PVector ba = b.sub(a);
+        ba.setMag(speed);
+        for (int i=0;i<desiredLanes;i++ ){
+            if(i%2==0){
+                addLane(ab.x,ab.y);
+            }else{
+                addLane(ba.x,ba.y);
+            }
+
+        }
 
     }
 
