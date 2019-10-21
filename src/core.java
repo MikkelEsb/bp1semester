@@ -77,6 +77,7 @@ public class core extends PApplet {
     }
 
     public void draw() {
+	surface.setResizable(true); //TODO switch all screen dependant variables to width, height respectively.
         background(255);
         strokeWeight(2);
         fill(127);
