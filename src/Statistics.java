@@ -1,23 +1,25 @@
-import processing.core.PApplet;
-import processing.core.PVector;
 import java.util.ArrayList;
 
 public class Statistics {
-    PApplet parent;
-    ArrayList<Integer> vectorlength;
+    ArrayList<Float> vectorlength;
     int average;
     int i;
+    float x;
 
-    public Statistics(){
-        vectorlength = new ArrayList<Integer>(60);
+    public Statistics(){vectorlength = new ArrayList<Float>(60);
     }
-    void addStats(int x){
+    //add your stats to the arraylist using the following command
+    void addStats(float x){
         vectorlength.add(x);
     }
-    void average(ArrayList<Integer> vectorlength, int y){
-        //for(int i, )
-       average = vectorlength.get(y)/y; //TODO fix this with a good forloop
+    //prints your average
+    int average(){
+        for(int i = 0; i < vectorlength.size(); i++){
+            x = x + vectorlength.get(i);                //sums all the lengths and assigns them to memory at x.
+        }
+        average = (int) (x / vectorlength.size());      //calculates the average according to the size of your data, time interval should matter somewhere
+        return(average);
     }
-    public int getAverage(){return average;}
-    public ArrayList<Integer> getStatistics(){return vectorlength;}
+    //sanity control
+    public ArrayList<Float> getStatistics(){return vectorlength;}
 }
