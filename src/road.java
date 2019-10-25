@@ -14,14 +14,17 @@ public class road {
     LinkedList<connection> connections;
 
 
-    public road() {
+    public road(PApplet p) {
+        parent=p;
         points = new ArrayList<PVector>();
         lanes = new ArrayList<lane>();
         connections = new LinkedList<connection>();
         //On construction we create the arraylist which contains the points
 
     }
-
+    void addPVectorPoint(PVector point){
+        points.add(point);
+    }
     void addPoint(float x, float y) {
         //First we create a vector at (x,y)
         PVector point = new PVector(x, y);
@@ -86,6 +89,14 @@ public class road {
         //connections.get(0).addRoad(connectingRoad);//TODO BAD
 
     }
+    float getLength(){
+        //Get's the length of the road by looking at each vector point and taking the distance between them.
+        return this.getStart().dist(this.getEnd());
+    }
+    float getTraverseTime(int laneIndex){
+        //Gets the time it takes to traverse the entire length of the road considering the lane you're in.
+        return 1f;
+    }
     void generateLanes(float speed,int desiredLanes){
 
         if (desiredLanes%2!=0){
@@ -129,7 +140,7 @@ public class road {
         parent = p;
     }
     void display() {
-
+        //System.out.println("Trying to draw points:" + points.get(0).toString() + " and " + points.get(1).toString());
         parent.strokeWeight(5);
         parent.stroke(0, 100);
         parent.line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);

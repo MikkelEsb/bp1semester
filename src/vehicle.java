@@ -13,6 +13,7 @@ public class vehicle {
     PVector steer;
     road myRoad;
     lane myLane;
+    boolean needsRoad;
     float r = 4;
     float maxSpeed = 3;
     float maxAcceleration = 0.05f;
@@ -156,26 +157,44 @@ public class vehicle {
         //System.out.println(predictLoc); //debugging
         float adist=a.dist(location);
         float bdist=b.dist(location);
-       /* if(adist<=(velocity.mag()+20)){
-            connection newCon           = CurRoad.getConnection(a);
-            if (newCon!=null) {
-                road nextRoad = getNextRoad(newCon, a);
-                this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
-                System.out.println("new road set a");
+        if (!needsRoad){
+            //If we don't need a road then we check if we might need one soon
+            if (!(adist<=(velocity.mag()+20) || bdist<=(velocity.mag()+20))){
+                //If the distance to either points on our current road is larger than the speed+20 (arbitrarialy) then we need to find a new road soon
+                needsRoad=true;
+                //System.out.println("NeedRoad=true");
+            }else{
+                needsRoad=false;
+                //System.out.println("NeedRoad=false");
             }
-        }*/
-        if(bdist<=(velocity.mag()+20)) {
-            connection newCon = CurRoad.getConnection(b);
-            if (newCon!=null) { //Sometimes we don't actually have any connections so we have to handle this edge case.
-                road nextRoad = getNextRoad(newCon, b);
-                getBestLaneToTarget(nextRoad);
-                this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
-                System.out.println("new road set b");
+
+        }else { //If we do need a road we look for one and then set that we don't need one anymore
+
+            if (adist <= (velocity.mag() + 20)) {
+                connection newCon = CurRoad.getConnection(a);
+                if (newCon != null) {
+                    road nextRoad = getNextRoad(newCon, a);
+                    this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
+                    System.out.println("new road set a");
+                    needsRoad=false;
+                }
             }
+            if (bdist <= (velocity.mag() + 20)) {
+                //System.out.println("Adist: " + adist +", Bdist: " + bdist);
+                connection newCon = CurRoad.getConnection(b);
+                if (newCon != null) { //Sometimes we don't actually have any connections so we have to handle this edge case.
+                    road nextRoad = getNextRoad(newCon, b);
+                    getBestLaneToTarget(nextRoad);
+                    this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
+                    System.out.println("new road set b");
+                    needsRoad=false;
+                }else{
+                    System.out.println("Couldn't find connection!");
+                }
+            }
+
         }
-        PVector normalPoint = getNormalPoint(predictLoc,a,b);
-
-
+        PVector normalPoint = getNormalPoint(predictLoc, a, b);
         float distance = PVector.dist(predictLoc, normalPoint);
         //System.out.println(distance);
         if (distance > 10) { //TODO change 5 to a number that makes sense in regard to where the specific lane is on the road.
