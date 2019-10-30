@@ -8,11 +8,7 @@ import static processing.core.PApplet.map;
 
 public class vehicle {
     PApplet parent;
-    PVector location;
-    PVector velocity;
-    PVector acceleration;
-    PVector myTarget;
-    PVector steer;
+    PVector location, velocity, acceleration, myTarget, steer;
     road myRoad;
     lane myLane;
     boolean needsRoad;
@@ -24,11 +20,11 @@ public class vehicle {
     ArrayList<connection> allConnections= new ArrayList<connection>();
 
     public vehicle(float x, float y, float t_x, float t_y) {
-        location = new PVector(x, y);
-        velocity = new PVector(0, 0);
-        acceleration = new PVector(0, 0);
-        myTarget = new PVector(t_x, t_y);
-        steer = new PVector(0, 0);
+        location        = new PVector(x, y);
+        velocity        = new PVector(0, 0);
+        acceleration    = new PVector(0, 0);
+        myTarget        = new PVector(t_x, t_y);
+        steer           = new PVector(0, 0);
     }
 
     void setParent(PApplet p) {
