@@ -1,6 +1,8 @@
 import processing.core.PVector;
 import processing.core.*;
 
+import java.util.ArrayList;
+
 import static processing.core.PApplet.map;
 
 
@@ -15,10 +17,11 @@ public class vehicle {
     lane myLane;
     boolean needsRoad;
     float r = 4;
-    float maxSpeed = 3;
+    float maxSpeed = 1;
     float maxAcceleration = 0.05f;
     int score = 0;
     int colour = 177;
+    ArrayList<connection> allConnections= new ArrayList<connection>();
 
     public vehicle(float x, float y, float t_x, float t_y) {
         location = new PVector(x, y);
@@ -47,8 +50,9 @@ public class vehicle {
         //Update location from velocity
         if (location.dist(myTarget) < maxSpeed) {
             this.score = this.score + 1;
-            myTarget.x = (float) (Math.random() * 1200);
-            myTarget.y = (float) (Math.random() * 720);
+            myTarget = allConnections.get((int) parent.random(0,allConnections.size())).connectingPoint.get();
+            //myTarget.x = (float) (Math.random() * 1200);
+            //myTarget.y = (float) (Math.random() * 720);
             //velocity.mult(0);
         } else {
             //velocity.y=(float) 0.9;
@@ -56,8 +60,8 @@ public class vehicle {
 
         }
 
-        velocity.add(acceleration);
-        velocity.limit(maxSpeed);
+        //velocity.add(acceleration);
+        //velocity.limit(maxSpeed);
         location.add(velocity);
         acceleration.mult(0); //As the acceleration force has been applied we set the acceleration back to 0
         if (location.x > 1200) {
@@ -100,7 +104,9 @@ public class vehicle {
         for (int i=0; i<tempRoad.lanes.size();i++){
             PVector dirWithLoc = tempRoad.lanes.get(i).direction.get();
             dirWithLoc.add(location);
+            //dirWithLoc.add(location);
             float tDist = dirWithLoc.dist(myTarget);
+            System.out.println("distance lane to target" + tDist + " for vector: " + tempRoad.lanes.get(i).direction.get());
             if (tDist<shortestDist){
                 shortestDist=tDist;
                 laneNum=i;
@@ -109,6 +115,7 @@ public class vehicle {
         if (laneNum==-1){
             System.out.println("Shiit man -1 laneNum");
         }
+        System.out.println("We think lane with dist " + shortestDist + ", and vector: " + tempRoad.lanes.get(laneNum)+ ". is the best for reaching goal");
         return tempRoad.lanes.get(laneNum);
     }
     road getNextRoad(connection ourConnections,PVector currentPoint){
@@ -117,6 +124,7 @@ public class vehicle {
         int nCheck;
         //We loop through all roads to our connection
         for (int i = 0; i < ourConnections.connectingRoads.size(); i++){
+
             //Then we check if our first point in the road is equals to the point we're checking from.
             if (ourConnections.connectingRoads.get(i).getNPoint(0).equals(currentPoint)){
                 //If the point we're at is the same as the point we're looking at then we're interested in the opposite point (assuming we only have 2 points).
@@ -128,6 +136,7 @@ public class vehicle {
             }
             //We check the distance between our desired point to our current target.
             float dis=ourConnections.connectingRoads.get(i).getNPoint(nCheck).dist(myTarget);
+            System.out.println("Distance to point: " + dis);
             if (dis<shortestDist){
                 //If our distance is shorter than the current best then we conclude that this is the best road for now.
                 shortestDist=dis;
@@ -144,6 +153,17 @@ public class vehicle {
         return ourConnections.connectingRoads.get(bestRoad);
     }
 
+    public connection getConnectionFromPoint(PVector point){
+        for (int i=0;i<allConnections.size();i++){
+            if (allConnections.get(i).connectingPoint.dist(point)<1){
+                return allConnections.get(i);
+            }
+        }
+        System.out.println("Couldn't find le conectione");
+        return null;
+    }
+
+
     void followRoad(road CurRoad,lane desiredLane){
         if (CurRoad==null){
             return;
@@ -159,7 +179,7 @@ public class vehicle {
         float bdist=b.dist(location);
         if (!needsRoad){
             //If we don't need a road then we check if we might need one soon
-            if (!(adist<=(velocity.mag()+20) || bdist<=(velocity.mag()+20))){
+            if (!(adist<=(velocity.mag()+5) || bdist<=(velocity.mag()+5))){
                 //If the distance to either points on our current road is larger than the speed+20 (arbitrarialy) then we need to find a new road soon
                 needsRoad=true;
                 //System.out.println("NeedRoad=true");
@@ -170,31 +190,37 @@ public class vehicle {
 
         }else { //If we do need a road we look for one and then set that we don't need one anymore
 
-            if (adist <= (velocity.mag() + 20)) {
-                connection newCon = CurRoad.getConnection(a);
+            if (adist <= (velocity.mag() + 5)) {
+                connection newCon = getConnectionFromPoint(a);
                 if (newCon != null) {
                     road nextRoad = getNextRoad(newCon, a);
                     this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
                     System.out.println("new road set a");
+                    location.set(a);
                     needsRoad=false;
+                }else{
+                    //this.velocity.setMag(0);
+                    //System.out.println("Setting speed to 0 as no connection was found");
                 }
             }
-            if (bdist <= (velocity.mag() + 20)) {
+            if (bdist <= (velocity.mag() + 5)) {
                 //System.out.println("Adist: " + adist +", Bdist: " + bdist);
-                connection newCon = CurRoad.getConnection(b);
+                connection newCon = getConnectionFromPoint(b);
                 if (newCon != null) { //Sometimes we don't actually have any connections so we have to handle this edge case.
                     road nextRoad = getNextRoad(newCon, b);
                     getBestLaneToTarget(nextRoad);
                     this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
+                    location.set(b);
                     System.out.println("new road set b");
                     needsRoad=false;
                 }else{
-                    System.out.println("Couldn't find connection!");
+                    //this.velocity.setMag(0);
+                    //System.out.println("Couldn't find connection!");
                 }
             }
 
         }
-        PVector normalPoint = getNormalPoint(predictLoc, a, b);
+        /*PVector normalPoint = getNormalPoint(predictLoc, a, b);
         float distance = PVector.dist(predictLoc, normalPoint);
         //System.out.println(distance);
         if (distance > 10) { //TODO change 5 to a number that makes sense in regard to where the specific lane is on the road.
@@ -203,13 +229,16 @@ public class vehicle {
             //System.out.println("We seekin bro");
             seek(yolo);
 
-        }else{
-            acceleration.set(desiredLane.direction);
-            acceleration.setMag(maxAcceleration);
-        }
+        }else{*/
+            velocity.set(desiredLane.direction);
+        //System.out.println(desiredLane.direction.toString());
+            //acceleration.setMag(maxAcceleration);
+
 
 
     }
+
+
     void follow(Path p) {
 
         // Predict location 50 (arbitrary choice) frames ahead
@@ -281,7 +310,9 @@ public class vehicle {
 
 
     void run() {
-        followRoad(myRoad,myLane);
+        if (myRoad!=null && myLane!=null) {
+            followRoad(myRoad, myLane);
+        }
         update();
         display();
     }
@@ -301,10 +332,14 @@ public class vehicle {
         parent.vertex(r, r * 2);
         parent.endShape();
         parent.popMatrix();
-        parent.ellipse(myTarget.x,myTarget.y,5,5);
+        parent.fill(255);
+        parent.ellipse(myTarget.x,myTarget.y,10,10);
         //parent.ellipse(target.x, target.y, 3, 3);
 
     }
 
 
+    public void setAllConnections(ArrayList<connection> newConnections) {
+        allConnections=newConnections;
+    }
 }

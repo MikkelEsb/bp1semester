@@ -10,6 +10,7 @@ public class core extends PApplet {
     ArrayList<connection> allConnections= new ArrayList<connection>();
     ArrayList<road> allRoads = new ArrayList<road>();
     ArrayList<vehicle> allCars = new ArrayList<vehicle>();
+    int numVehicles = 5;
     int numXRoads = 5;
     int numYRoads = 5;
     float distanceBetweenPoints=150f;
@@ -22,6 +23,8 @@ public class core extends PApplet {
         size(1200, 720);
     }
 
+
+
     public void setup() {
         surface.setResizable(true);
         int currentIndex=0;
@@ -29,34 +32,57 @@ public class core extends PApplet {
             for (int y=0;y<numYRoads;y++){
                 PVector currentPoint = new PVector(x*distanceBetweenPoints+20,y*distanceBetweenPoints+20);
                 connection currentConnection = new connection(currentPoint);
-
-                if (x>0 && x<numXRoads){
+                //System.out.println(currentPoint.toString());
+                if (x>0 && x<=numXRoads){
                     road tempRoad=new road(this);
                     tempRoad.addPVectorPoint(currentPoint);
                     currentConnection.addRoad(tempRoad);
                     tempRoad.addPoint(currentPoint.x-distanceBetweenPoints,currentPoint.y);
+                    tempRoad.generateLanes(1.5f,2);
+                    allConnections.get(currentIndex-numYRoads).addRoad(tempRoad);
+                    //System.out.println("Making connection between " + currentPoint.toString() + " and " + allConnections.get(currentIndex-numYRoads).connectingPoint.toString());
                     allRoads.add(tempRoad);
 
+
                 }
-                if (y>0 && y<numYRoads){
+                if (y>0 && y<=numYRoads){
                     road tempRoad=new road(this);
                     tempRoad.addPVectorPoint(currentPoint);
                     currentConnection.addRoad(tempRoad);
                     tempRoad.addPoint(currentPoint.x,currentPoint.y-distanceBetweenPoints);
-                    System.out.println("x: "+ x  + ", y: " + y + ". index:" + currentIndex);
-                   // allConnections.get(currentIndex-numYRoads).addRoad(tempRoad);
+                    tempRoad.generateLanes(1.5f,2);
+                    //System.out.println("x: "+ x  + ", y: " + y + ". index:" + currentIndex);
+                    allConnections.get(currentIndex-1).addRoad(tempRoad);
                     allRoads.add(tempRoad);
+                    //System.out.println("Making connection between " + currentPoint.toString() + " and " + allConnections.get(currentIndex-1).connectingPoint.toString());
                 }
 
-                allConnections.add(currentIndex,new connection(currentPoint));
+                allConnections.add(currentIndex,currentConnection);
                 currentIndex++;
-                System.out.println(currentPoint.toString());
+                //System.out.println(currentPoint.toString() +"and value of last insert: " + allConnections.get(currentIndex-1).connectingPoint.toString());
             }
+        }
+        for (int i=0;i<numVehicles;i++){
+            connection spawnConnection=allConnections.get((int) random(0,allConnections.size()));
+            PVector targetLoc = allConnections.get((int)random(0,allConnections.size())).connectingPoint.get();
+            PVector spawnLoc=spawnConnection.connectingPoint.get();
+            road spawnRoad = spawnConnection.connectingRoads.get((int)random(0,spawnConnection.connectingRoads.size()));
+            vehicle newVehicle = new vehicle(spawnLoc.x,spawnLoc.y,targetLoc.x,targetLoc.y);
+            newVehicle.setRoad(spawnRoad,spawnRoad.lanes.get(0));
+            newVehicle.setVelocity(spawnRoad.lanes.get(0).direction.x*0.2f,spawnRoad.lanes.get(0).direction.y*0.2f);
+            //System.out.println("Spawnx: " + spawnRoad.lanes.get(0).direction.x +  "  Set velocity to" + newVehicle.velocity.toString());
+            newVehicle.setAllConnections(allConnections);
+            newVehicle.setParent(this);
+            allCars.add(newVehicle);
         }
 
         background(255);
         //smooth();
-
+       /* for (int r=0;r<allRoads.size();r++){
+            for (int l=0;l<allRoads.get(r).lanes.size();l++){
+                System.out.println(allRoads.get(r).lanes.get(l).direction.toString());
+            }
+        }*/
     }
 
     public void exit() {
@@ -64,7 +90,6 @@ public class core extends PApplet {
     }
 
     public void draw() {
-	surface.setResizable(true); //TODO switch all screen dependant variables to width, height respectively.
         background(255);
         strokeWeight(2);
         fill(127);
@@ -72,6 +97,9 @@ public class core extends PApplet {
         //path.display();
         for (int i=0;i<allRoads.size();i++){
             allRoads.get(i).display();
+        }
+        for (int i=0;i<allCars.size();i++){
+            allCars.get(i).run();
         }
         clock();
 

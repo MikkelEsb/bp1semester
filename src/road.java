@@ -104,13 +104,18 @@ public class road {
         }
         PVector a = this.getStart().get();
         PVector b = this.getEnd().get();
-        PVector ab = a.sub(b);
+        //System.out.println("A: " + a.toString() + ". B: " + b.toString());
+        PVector ab = a.get().sub(b);
+       // System.out.println("AB: " +ab.toString());
         ab.setMag(speed);
-        PVector ba = b.sub(a);
+        //System.out.println("A: " + a.toString() + ". B: " + b.toString());
+        PVector ba = b.get().sub(a);
+        //System.out.println("BA: " +ba.toString());
         ba.setMag(speed);
         for (int i=0;i<desiredLanes;i++ ){
             if(i%2==0){
                 addLane(ab.x,ab.y);
+
             }else{
                 addLane(ba.x,ba.y);
             }
@@ -121,6 +126,7 @@ public class road {
 
     void addLane(float x, float y) {
         //Adds the velocity vector for the lane
+        //System.out.println("adding lane with vector:" + x + ", " + y);
         lane newLane = new lane(x, y);
         lanes.add(newLane);
     }
