@@ -1,7 +1,5 @@
 import processing.core.PApplet;
 import processing.core.PVector;
-
-import java.sql.Array;
 import java.util.ArrayList;
 
 public class core extends PApplet {
@@ -13,7 +11,9 @@ public class core extends PApplet {
     int numVehicles = 5;
     int numXRoads = 5;
     int numYRoads = 5;
+    int t, s = 0;
     float distanceBetweenPoints=150f;
+    Statistics statistics = new Statistics(numVehicles);
 
     public static void main(String[] args) {
         PApplet.main("core");
@@ -22,8 +22,6 @@ public class core extends PApplet {
     public void settings() {
         size(1200, 720);
     }
-
-
 
     public void setup() {
         surface.setResizable(true);
@@ -42,7 +40,6 @@ public class core extends PApplet {
                     allConnections.get(currentIndex-numYRoads).addRoad(tempRoad);
                     //System.out.println("Making connection between " + currentPoint.toString() + " and " + allConnections.get(currentIndex-numYRoads).connectingPoint.toString());
                     allRoads.add(tempRoad);
-
 
                 }
                 if (y>0 && y<=numYRoads){
@@ -106,11 +103,11 @@ public class core extends PApplet {
     }
 
     private void clock(){
-        int m = millis();
+        fill(0);
+        t = frameCount % 60;
+        if(t == (int) 59){s+= 1;}
         textSize(32);
-        int s = m/1000;
-        text("Seconds elasped " + s, 600, 30);
-
+        text("Seconds elapsed " + s + "t: " + t + ". frameRate: " + frameRate, 30, 30 );
     }
 
 }
