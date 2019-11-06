@@ -1,18 +1,19 @@
 import java.util.ArrayList;
 
-public class Statistics {
+class Statistics {
     ArrayList<Float> vectorLengths;
     int average;
     int i = 1;
     float x;
     int t = 60; //how much data stored in array measured in time interval
-    int N;      //define this as the number of vehicles in the system, this probably to remain constant
     ArrayList<Integer> movingAverage;
+    int N;
 
     //Constructs statistics as an array of floats that should be equal to the length of the vector of whatever vehicle
-    public Statistics(){
-        vectorLengths = new ArrayList<Float>(t*N);
+    Statistics(int n){
+        vectorLengths = new ArrayList<Float>(t*n);
         movingAverage = new ArrayList<>();
+        N = n;
     }
 
     //add your stats to the arraylist using the following command
