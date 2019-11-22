@@ -11,6 +11,8 @@ public class road {
     ArrayList<PVector> points;
     //Each point is the entry/exit of the road.
     ArrayList<lane> lanes;
+    public float width=40;
+    boolean drawAlongX=false;
     LinkedList<connection> connections;
 
 
@@ -30,6 +32,16 @@ public class road {
         PVector point = new PVector(x, y);
         //Then we add our vector to our array of vectors
         points.add(point);
+        if(points.size()==2){
+            //We figure out which axis to draw our boundary lines for.
+            float deltaX=Math.abs(points.get(1).x-points.get(0).x);
+            if (deltaX>0){
+                //our change is along the X axis
+                drawAlongX=true;
+            }else{
+                drawAlongX=false;
+            }
+        }
     }
 
     connection getConnection(PVector connectingPlace) {
@@ -116,6 +128,7 @@ public class road {
             if(i%2==0){
                 addLane(ab.x,ab.y);
 
+
             }else{
                 addLane(ba.x,ba.y);
             }
@@ -147,9 +160,34 @@ public class road {
     }
     void display() {
         //System.out.println("Trying to draw points:" + points.get(0).toString() + " and " + points.get(1).toString());
-        parent.strokeWeight(5);
+        parent.strokeWeight(2);
         parent.stroke(0, 100);
-        parent.line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);
+        float xDelta=0;
+        float yDelta=0;
+        if (drawAlongX){
+            yDelta=width/2;
+        }else{
+            xDelta=width/2;
+        }
+        //System.out.println("deltaX: " + xDelta + ", deltay: " +yDelta);
+        parent.line(points.get(0).x+xDelta, points.get(0).y+yDelta, points.get(1).x+xDelta, points.get(1).y+yDelta);
+        parent.line(points.get(0).x-xDelta, points.get(0).y-yDelta, points.get(1).x-xDelta, points.get(1).y-yDelta);
+        parent.strokeWeight(1);
+        float laneWidth=width/lanes.size();
+        float laneWx=0;
+        float laneWy=0;
+        if (drawAlongX){
+            laneWy=laneWidth;
+        }else{
+            laneWx=laneWidth;
+        }
+        for (int i=1;i<lanes.size();i++){
+            //For a given road that has two lanes we have a dividing line between each lane.
+            //So if we start our road from x-xDelta y-yDelta and then add our lanewidth for each lane.
+            parent.line(points.get(0).x-xDelta+laneWx*i,points.get(0).y-yDelta+laneWy*i,points.get(1).x-xDelta+laneWx*i,points.get(1).y-yDelta+laneWy*i);
+
+        }
+        //parent.line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);
 
     }
 }

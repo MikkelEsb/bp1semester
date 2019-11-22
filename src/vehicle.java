@@ -1,6 +1,7 @@
 import processing.core.PVector;
 import processing.core.*;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import static processing.core.PApplet.map;
@@ -47,6 +48,7 @@ public class vehicle {
         if (location.dist(myTarget) < maxSpeed) {
             this.score = this.score + 1;
             myTarget = allConnections.get((int) parent.random(0,allConnections.size())).connectingPoint.get();
+
             //myTarget.x = (float) (Math.random() * 1200);
             //myTarget.y = (float) (Math.random() * 720);
             //velocity.mult(0);
@@ -171,12 +173,16 @@ public class vehicle {
         predictLoc.mult(50);
         predictLoc.add(location);
         //System.out.println(predictLoc); //debugging
+        parent.fill(255);
+        parent.ellipse(a.x,a.y,20,20);
+        parent.ellipse(b.x,b.y,20,20);
         float adist=a.dist(location);
         float bdist=b.dist(location);
         if (!needsRoad){
             //If we don't need a road then we check if we might need one soon
-            if (!(adist<=(velocity.mag()+5) || bdist<=(velocity.mag()+5))){
+            if (!(adist<=(velocity.mag()+10) || bdist<=(velocity.mag()+10))){
                 //If the distance to either points on our current road is larger than the speed+20 (arbitrarialy) then we need to find a new road soon
+
                 needsRoad=true;
                 //System.out.println("NeedRoad=true");
             }else{
@@ -185,8 +191,7 @@ public class vehicle {
             }
 
         }else { //If we do need a road we look for one and then set that we don't need one anymore
-
-            if (adist <= (velocity.mag() + 5)) {
+            if (adist <= (velocity.mag() + 10)) {
                 connection newCon = getConnectionFromPoint(a);
                 if (newCon != null) {
                     road nextRoad = getNextRoad(newCon, a);
@@ -195,11 +200,14 @@ public class vehicle {
                     location.set(a);
                     needsRoad=false;
                 }else{
+                    System.out.println("Nullie1");
                     //this.velocity.setMag(0);
                     //System.out.println("Setting speed to 0 as no connection was found");
                 }
+            }else{
+                //System.out.println("adist: " + adist);
             }
-            if (bdist <= (velocity.mag() + 5)) {
+            if (bdist <= (velocity.mag() + 10)) {
                 //System.out.println("Adist: " + adist +", Bdist: " + bdist);
                 connection newCon = getConnectionFromPoint(b);
                 if (newCon != null) { //Sometimes we don't actually have any connections so we have to handle this edge case.
@@ -210,9 +218,12 @@ public class vehicle {
                     System.out.println("new road set b");
                     needsRoad=false;
                 }else{
+                    System.out.println("nullie");
                     //this.velocity.setMag(0);
                     //System.out.println("Couldn't find connection!");
                 }
+            }else{
+                //System.out.println("Bdist:" +bdist  );
             }
 
         }
@@ -266,6 +277,28 @@ public class vehicle {
             acceleration.setMag(maxAcceleration);
         }
 
+    }
+    public void followIntersectionPath(intersectionPath currentPath){
+        //This logic is for while we are in range of an intersection.
+
+        //On the currentPath we're on we might be driving on a subpath
+        /*
+            Pseudo-logic:
+            See if our speed exceeds the distance remaining of our sub-path (straight or circular)
+                Do the position change calculation on our first sub-path for the remaining distance
+                Then do the remaining position change calculation for our next subpath.
+            Else continue along subpath.
+         */
+        if (currentPath.subPath.size()==1){
+            //We only have one subpath in the intersection.
+
+
+        }
+        if (currentPath.subPath.size()>1){
+            //We have more than one subpath for our currentpath
+
+
+        }
     }
 
     void applyForce(PVector force) {
