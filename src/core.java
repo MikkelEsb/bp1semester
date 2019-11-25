@@ -9,6 +9,7 @@ public class core extends PApplet {
     ArrayList<intersection> allIntersections = new ArrayList<>();
     ArrayList<road> allRoads = new ArrayList<road>();
     ArrayList<vehicle> allCars = new ArrayList<vehicle>();
+    int t,s;
     int lastInt=0;
     int numVehicles = 1;
     int numXRoads = 3;
@@ -91,7 +92,7 @@ public class core extends PApplet {
                     tempRoad.addPoint(allIntersections.get(currentIndex-1).x2,y1+intersectionWidth/2);
                     tempRoad.addPoint(x1,y1+intersectionWidth/2);
                     //Now that we have generated the road we want some of those lovely lanes on it.
-                    tempRoad.generateLanes(1.5f,4);
+                    tempRoad.generateLanes(1.5f,2);
                     //Lanes have been generated, let's add the road to both of the intersections so they are aware of this connection.
                     allIntersections.get(currentIndex-1).addRoad(tempRoad);
                     newIntersection.addRoad(tempRoad);
@@ -105,7 +106,7 @@ public class core extends PApplet {
                     tempRoad.addPoint(x1+intersectionWidth/2,allIntersections.get(currentIndex-numYRoads).y2);
                     tempRoad.addPoint(x1+intersectionWidth/2,y1);
                     //Now that we have generated the road we want some of those lovely lanes on it.
-                    tempRoad.generateLanes(1.5f,4);
+                    tempRoad.generateLanes(1.5f,2);
                     //Lanes have been generated, let's add the road to both of the intersections so they are aware of this connection.
                     allIntersections.get(currentIndex-numYRoads).addRoad(tempRoad);
                     newIntersection.addRoad(tempRoad);
@@ -119,21 +120,21 @@ public class core extends PApplet {
         for (int i=0;i<allIntersections.size();i++){
             allIntersections.get(i).updateConnections();
         }
-        /*
+
         for (int i=0;i<numVehicles;i++){
-            connection spawnConnection=allConnections.get((int) random(0,allConnections.size()));
-            PVector targetLoc = allConnections.get((int)random(0,allConnections.size())).connectingPoint.get();
-            PVector spawnLoc=spawnConnection.connectingPoint.get();
-            road spawnRoad = spawnConnection.connectingRoads.get((int)random(0,spawnConnection.connectingRoads.size()));
-            vehicle newVehicle = new vehicle(spawnLoc.x,spawnLoc.y,targetLoc.x,targetLoc.y);
+            intersection spawnIntersection=allIntersections.get((int) random(0,allIntersections.size()));
+            road spawnRoad = spawnIntersection.connectedRoads.get((int) random(0,spawnIntersection.connectedRoads.size()));
+
+            PVector spawnLoc = spawnRoad.getEnd();
+            vehicle newVehicle = new vehicle(spawnLoc.x,spawnLoc.y,900,900);
             newVehicle.setRoad(spawnRoad,spawnRoad.lanes.get(0));
             newVehicle.setVelocity(spawnRoad.lanes.get(0).direction.x*0.2f,spawnRoad.lanes.get(0).direction.y*0.2f);
             //System.out.println("Spawnx: " + spawnRoad.lanes.get(0).direction.x +  "  Set velocity to" + newVehicle.velocity.toString());
-            newVehicle.setAllConnections(allConnections);
+            //newVehicle.setAllConnections(allConnections);
             newVehicle.setParent(this);
             allCars.add(newVehicle);
         }
-        */
+
         background(0,200,50);
         //smooth();
        /* for (int r=0;r<allRoads.size();r++){

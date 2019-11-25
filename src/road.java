@@ -109,6 +109,7 @@ public class road {
         //Gets the time it takes to traverse the entire length of the road considering the lane you're in.
         return 1f;
     }
+
     void generateLanes(float speed,int desiredLanes){
 
         if (desiredLanes%2!=0){
@@ -116,6 +117,13 @@ public class road {
         }
         PVector a = this.getStart().get();
         PVector b = this.getEnd().get();
+        if (drawAlongX){
+            //Negative X values go first
+            //Positive X values goes last
+        }else{
+            //Positive Y values goes first
+            //negative Y values goes last
+        }
         //System.out.println("A: " + a.toString() + ". B: " + b.toString());
         PVector ab = a.get().sub(b);
        // System.out.println("AB: " +ab.toString());
@@ -125,23 +133,74 @@ public class road {
         //System.out.println("BA: " +ba.toString());
         ba.setMag(speed);
         for (int i=0;i<desiredLanes;i++ ){
+            int index;
             if(i%2==0){
-                addLane(ab.x,ab.y);
 
+                if (drawAlongX){
+
+                    if (ab.x>0){
+                        index=0;
+                    }else{
+                        index=lanes.size();
+                    }
+                    //Negative X values go first
+                    //Positive X values goes last
+                }else{
+                    //Positive Y values goes first
+                    //negative Y values goes last
+                    if (ab.y<0){
+                        index=0;
+                    }else{
+                        index=lanes.size();
+                    }
+                }
+                addLane(ab.x,ab.y,index);
 
             }else{
-                addLane(ba.x,ba.y);
+                if (drawAlongX){
+
+                    if (ba.x>0){
+                        index=0;
+                    }else{
+                        index=lanes.size();
+                    }
+                    //Negative X values go first
+                    //Positive X values goes last
+                }else{
+                    //Positive Y values goes first
+                    //negative Y values goes last
+                    if (ba.y<0){
+                        index=0;
+                    }else{
+                        index=lanes.size();
+                    }
+                }
+                addLane(ba.x,ba.y,index);
             }
 
         }
 
     }
+    void sortLanes(boolean rightSide){
+        //We sort our lanes in our road so that they are all driving in the right or left side of the road.
+        //When we're drawing the lanes we draw the first lane in the array first.
 
-    void addLane(float x, float y) {
+        //For rightSided
+        //So for the lanes along the x-axis we will have all the lanes that have a negative direction in the X coordinate first.
+        //For the ones drawn along the Y-axis we will draw the lanes that go in negative direction in the Y coordinate first.
+
+        //Find out some way to sort things pllss
+
+
+
+
+    }
+
+    void addLane(float x, float y,int index) {
         //Adds the velocity vector for the lane
         //System.out.println("adding lane with vector:" + x + ", " + y);
         lane newLane = new lane(x, y);
-        lanes.add(newLane);
+        lanes.add(index,newLane);
     }
 
     PVector getNPoint(int n) {

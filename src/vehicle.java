@@ -162,6 +162,7 @@ public class vehicle {
     }
 
 
+
     void followRoad(road CurRoad,lane desiredLane){
         if (CurRoad==null){
             return;
@@ -276,6 +277,31 @@ public class vehicle {
             acceleration.set(velocity);
             acceleration.setMag(maxAcceleration);
         }
+
+    }
+    int getBestExitFromIntersection(intersection thatIntersection){
+        float shortestDist=100000;
+        int laneNum=-1;
+        for (int i=0; i<thatIntersection.exitPoints.size();i++){
+            PVector dirWithLoc = thatIntersection.exitPoints.get(i).thisLane.direction.get();
+            dirWithLoc.add(location);
+            //dirWithLoc.add(location);
+            float tDist = dirWithLoc.dist(myTarget);
+            System.out.println("distance lane to target" + tDist + " for vector: " );
+            if (tDist<shortestDist){
+                shortestDist=tDist;
+                laneNum=i;
+            }
+        }
+        if (laneNum==-1){
+            System.out.println("Shiit man -1 laneNum");
+        }
+        System.out.println("We think lane with dist " + shortestDist + ", and vector: " + thatIntersection.exitPoints.get(laneNum).thisLane + ". is the best for reaching goal");
+        return laneNum;
+    }
+    public void getIntersectionPath(intersection thatIntersection){
+        //We find out which exit we need then we get a path.
+        int exitPoint
 
     }
     public void followIntersectionPath(intersectionPath currentPath){

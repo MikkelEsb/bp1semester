@@ -6,11 +6,11 @@ import java.util.ArrayList;
 public class intersection {
     float x1,x2,y1,y2;
     PApplet parent;
-    ArrayList intersectionConnections = new ArrayList();
+    ArrayList<intersectionPath> intersectionConnections = new ArrayList();
     ArrayList<road> connectedRoads = new ArrayList<>();
     ArrayList<PVector> testPoints = new ArrayList<>();
-    ArrayList entryPoints = new ArrayList();
-    ArrayList exitPoints = new ArrayList();
+    ArrayList<intersectionConnectionPoint> entryPoints = new ArrayList();
+    ArrayList<intersectionConnectionPoint> exitPoints = new ArrayList();
 
     public intersection(float x,float y,float x0,float y0,PApplet p){
         //An intersection is a rectangle defined by two opposite corners
@@ -118,13 +118,14 @@ public class intersection {
         //We should have all our lanes as entry or exit points at this time, now we just gotta connect all of them
         for (int i=0; i<entryPoints.size();i++){
             for (int j=0;j<exitPoints.size();j++){
-                //intersectionConnections.add(new intersectionPath(entryPoints.get(i).x))
+                intersectionConnections.add(i,new intersectionPath(entryPoints.get(i).x,entryPoints.get(i).y,exitPoints.get(j).x,exitPoints.get(j).y,2f));
             }
         }
 
 
 
     }
+
     public void display(){
         parent.fill(150);
         parent.rect(x1,y1,x2,y2);
@@ -133,8 +134,13 @@ public class intersection {
         for (int i=0;i<connectedRoads.size();i++){
             connectedRoads.get(i).display();
         }
-        for (int i = 0; i<testPoints.size();i++){
-            parent.ellipse(testPoints.get(i).x,testPoints.get(i).y,5,5);
+        for (int i = 0; i<entryPoints.size();i++){
+            parent.fill(0,255,0);
+            parent.ellipse(entryPoints.get(i).x,entryPoints.get(i).y,5,5);
+        }
+        for (int i=0;i<exitPoints.size();i++){
+            parent.fill(255,0,0);
+            parent.ellipse(exitPoints.get(i).x,exitPoints.get(i).y,5,5);
         }
     }
 
