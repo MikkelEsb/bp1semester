@@ -1,12 +1,14 @@
 import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class intersection {
     float x1,x2,y1,y2;
     PApplet parent;
-    ArrayList<intersectionPath> intersectionConnections = new ArrayList();
+    ArrayList<ArrayList<intersectionPath>> intersectionConnections = new ArrayList<ArrayList<intersectionPath>>();
+    //ArrayList<ArrayList<Integer>> twoDArrayList = new ArrayList<ArrayList<Integer>>()
     ArrayList<road> connectedRoads = new ArrayList<>();
     ArrayList<PVector> testPoints = new ArrayList<>();
     ArrayList<intersectionConnectionPoint> entryPoints = new ArrayList();
@@ -100,9 +102,9 @@ public class intersection {
                 float distX=oppositeX-laneMidX+laneDir.x,distY=oppositeY-laneMidY+laneDir.y;
                 if (Math.sqrt(distX*distX+distY*distY)<(Math.abs(x1-x2))){
                     //If the distance to the opposite point is getting smaller than the length of our intersection we are entering it
-                    entryPoints.add(new intersectionConnectionPoint(laneMidX,laneMidY,connectedRoads.get(i).lanes.get(j)));
+                    entryPoints.add(new intersectionConnectionPoint(laneMidX,laneMidY,connectedRoads.get(i).lanes.get(j),connectedRoads.get(i)));
                 }else{
-                    exitPoints.add(new intersectionConnectionPoint(laneMidX,laneMidY,connectedRoads.get(i).lanes.get(j)));
+                    exitPoints.add(new intersectionConnectionPoint(laneMidX,laneMidY,connectedRoads.get(i).lanes.get(j),connectedRoads.get(i)));
                 }
                 //now we we need to figure out if this point is an exit or and entry
                 //We have the point at which we connect and we know the direction of our lane by knowing if the road is drawn vertically or horizontally we can
@@ -118,7 +120,12 @@ public class intersection {
         //We should have all our lanes as entry or exit points at this time, now we just gotta connect all of them
         for (int i=0; i<entryPoints.size();i++){
             for (int j=0;j<exitPoints.size();j++){
-                intersectionConnections.add(i,new intersectionPath(entryPoints.get(i).x,entryPoints.get(i).y,exitPoints.get(j).x,exitPoints.get(j).y,2f));
+                System.out.println("i: " + i + ", j: " + j);
+                if ((i+1)>intersectionConnections.size()){
+                    System.out.println("Hey hey");
+                    intersectionConnections.add(i,new ArrayList<intersectionPath>());
+                }
+                intersectionConnections.get(i).add(j, new intersectionPath(entryPoints.get(i), exitPoints.get(j), 2f));
             }
         }
 
@@ -142,6 +149,17 @@ public class intersection {
             parent.fill(255,0,0);
             parent.ellipse(exitPoints.get(i).x,exitPoints.get(i).y,5,5);
         }
+        /*for (int i=0;i<intersectionConnections.size();i++){
+            for (int j=0;j<intersectionConnections.get(i).size();j++){
+                intersectionCircle circleman = intersectionConnections.get(i).get(j).CircularPath;
+                if (circleman!=null){
+                    parent.line(circleman.xStart,circleman.yStart,circleman.xEnd,circleman.yEnd);
+                }
+
+
+            }
+        }*/
+
     }
 
 }

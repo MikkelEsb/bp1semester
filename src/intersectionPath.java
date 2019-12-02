@@ -1,10 +1,17 @@
+import processing.core.PVector;
+
 import java.util.ArrayList;
 
 public class intersectionPath
 {
     ArrayList subPath = new ArrayList<>(); // Should only be initilaized if we actually have multiple subpaths?
-    public intersectionPath(float startX,float startY,float endX,float endY,float speed){
+    intersectionCircle CircularPath;
+    public intersectionPath(intersectionConnectionPoint entry, intersectionConnectionPoint exit,float speed){
         //First we determine if the path is direct
+        float startX = entry.x;
+        float startY = entry.y;
+        float endX = exit.x;
+        float endY = exit.y;
         if (startX==endX || startY==endY) {
             subPath.add(new IntersectionStraightPath(startX,startY,endX,endY));
         }else{
@@ -13,9 +20,10 @@ public class intersectionPath
             //This might be be a partly circular motion or only a circular motion
             if(Math.abs(deltaX)==Math.abs(deltaY)){
                 //Since the distance between the two X points and the distance between the two Y points is equal we can make this into a circle.
-                intersectionCircle currentCircle = new intersectionCircle(startX,startY,endX,endY);
+                intersectionCircle currentCircle = new intersectionCircle(startX,startY,endX,endY,exit, PVector.angleBetween(entry.thisLane.direction,exit.thisLane.direction));
                 subPath.add(currentCircle);
-                System.out.println("Angular velocity for cicle with speed 2: " + currentCircle.getAngularVelocity(2));
+                CircularPath=currentCircle;
+                System.out.println("Angular velocity for cicle with speed 2: " + currentCircle.getAngularVelocity());
 
             }else{
                 System.out.println("Partial circle?");

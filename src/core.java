@@ -1,5 +1,7 @@
 import processing.core.PApplet;
 import processing.core.PVector;
+
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class core extends PApplet {
@@ -123,16 +125,21 @@ public class core extends PApplet {
 
         for (int i=0;i<numVehicles;i++){
             intersection spawnIntersection=allIntersections.get((int) random(0,allIntersections.size()));
-            road spawnRoad = spawnIntersection.connectedRoads.get((int) random(0,spawnIntersection.connectedRoads.size()));
-
-            PVector spawnLoc = spawnRoad.getEnd();
-            vehicle newVehicle = new vehicle(spawnLoc.x,spawnLoc.y,900,900);
-            newVehicle.setRoad(spawnRoad,spawnRoad.lanes.get(0));
-            newVehicle.setVelocity(spawnRoad.lanes.get(0).direction.x*0.2f,spawnRoad.lanes.get(0).direction.y*0.2f);
+            //road spawnRoad = spawnIntersection.connectedRoads.get((int) random(0,spawnIntersection.connectedRoads.size()));
+            road spawnRoad = spawnIntersection.entryPoints.get(1).thisRoad;
+            int entryPoint=0;
+            PVector spawnLoc = new PVector(spawnIntersection.entryPoints.get(entryPoint).x +spawnIntersection.entryPoints.get(entryPoint).thisLane.direction.x*60 ,spawnIntersection.entryPoints.get(entryPoint).y +spawnIntersection.entryPoints.get(entryPoint).thisLane.direction.y*60);
+            //PVector spawnLoc = spawnRoad.getEnd();
+            vehicle newVehicle = new vehicle(spawnLoc.x,spawnLoc.y,400,400);
+            newVehicle.setRoad(spawnRoad,spawnIntersection.entryPoints.get(entryPoint).thisLane);
+            newVehicle.setVelocity(spawnIntersection.entryPoints.get(entryPoint).thisLane.direction.x*0.2f,spawnIntersection.entryPoints.get(entryPoint).thisLane.direction.y*0.2f);
             //System.out.println("Spawnx: " + spawnRoad.lanes.get(0).direction.x +  "  Set velocity to" + newVehicle.velocity.toString());
             //newVehicle.setAllConnections(allConnections);
             newVehicle.setParent(this);
+            newVehicle.setIntersection(spawnIntersection);
+            newVehicle.setAllIntersections(allIntersections);
             allCars.add(newVehicle);
+
         }
 
         background(0,200,50);
@@ -158,26 +165,50 @@ public class core extends PApplet {
         //lastInt=(lastInt+1)%allRoads.size();
         //allRoads.get(lastInt).display();
         for (int i=0;i<allIntersections.size();i++){
-            allIntersections.get(i).display();
+           // allIntersections.get(i).display();
         }
         /*for (int i=0;i<allRoads.size();i++){
             allRoads.get(i).display();
         }*/
         for (int i=0;i<allCars.size();i++){
+            //allCars.get(i).run();
+            //allCars.get(i).followIntersectionPath(allIntersections.get(5).intersectionConnections.get(1).get(0));
+            fill(200,100,10);
+            allCars.get(i).currentIntersection.display();
             allCars.get(i).run();
+
         }
         for (int i=0;i<allConnections.size();i++){
            PVector conPoint= allConnections.get(i).connectingPoint.get();
            //ellipse(conPoint.x,conPoint.y,5,5);
            for (int j=0;j<allConnections.get(i).connectingRoads.size();j++){
                allConnections.get(i).connectingRoads.get(j).display();
+
            }
         }
 
         //clock();
 
     }
+    public void keyPressed(){
+        frameRate(60);
+    }
+    public void mousePressed(){
 
+
+        for (int i=0;i<allCars.size();i++){
+            allCars.get(i).myTarget.x=mouseX;
+            allCars.get(i).myTarget.y=mouseY;
+
+        }
+        System.out.println("Mouse pressed");
+        if(mouseButton==RIGHT){
+            allCars.get(0).location.x=mouseX;
+            allCars.get(0).location.y=mouseY;
+            allCars.get(0).getIntersectionPaths(allCars.get(0).currentIntersection);
+
+        }
+    }
     private void clock(){
         fill(0);
         t = frameCount % 60;
