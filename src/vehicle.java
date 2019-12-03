@@ -189,7 +189,7 @@ public class vehicle {
 
         if (!needsRoad){
             //If we don't need a road then we check if we might need one soon
-            if (!(adist<=(velocity.mag()+10) || bdist<=(velocity.mag()+10))){
+            if (!(adist<=(velocity.mag()+20) || bdist<=(velocity.mag()+20))){
                 //If the distance to either points on our current road is larger than the speed+20 (arbitrarialy) then we need to find a new road soon
 
                 needsRoad=true;
@@ -200,14 +200,14 @@ public class vehicle {
             }
 
         }else { //If we do need a road we look for one and then set that we don't need one anymore
-            if (adist <= (velocity.mag() + 10) && EntryPoint.dist(location)<10) {
+            if (adist <= (velocity.mag() + 20) && EntryPoint.dist(location)<10) {
                 //connection newCon = getConnectionFromPoint(a);
                 intersectionPath newCon = getIntersectionPaths(currentIntersection);
 
                 if (newCon != null ) {
                     //road nextRoad = getNextRoad(newCon, a);
                     myIntersectionPath=newCon;
-                    findNextIntersection();
+                    //findNextIntersection();
                     //this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
                     System.out.println("new road set a");
                     //location.set(a);
@@ -224,7 +224,7 @@ public class vehicle {
             }else{
                 //System.out.println("adist: " + adist);
             }
-            if (bdist <= (velocity.mag() + 10) && EntryPoint.dist(location)<10) {
+            if (bdist <= (velocity.mag() + 20) && EntryPoint.dist(location)<10) {
                 //System.out.println("Adist: " + adist +", Bdist: " + bdist);
                 //connection newCon = getConnectionFromPoint(b);
                 intersectionPath newCon = getIntersectionPaths(currentIntersection);
@@ -232,13 +232,14 @@ public class vehicle {
                 if (newCon != null ) {
                     //road nextRoad = getNextRoad(newCon, a);
                     myIntersectionPath=newCon;
-                    findNextIntersection();
+                    //findNextIntersection();
                     //this.setRoad(nextRoad, getBestLaneToTarget(nextRoad));
                     System.out.println("new road set a");
                     //location.set(a);
                     needsRoad=false;
                     myRoad=null;
                     myLane=null;
+
                 }else{
                     myRoad=null;
                     myLane=null;
@@ -339,7 +340,7 @@ public class vehicle {
         if (laneNum==-1){
             System.out.println("Shiit man -1 laneNum");
         }
-        System.out.println("We think lane with dist " + shortestDist + ", and vector: " + thatIntersection.exitPoints.get(laneNum).thisLane + ". is the best for reaching goal");
+        //System.out.println("We think lane with dist " + shortestDist + ", and vector: " + thatIntersection.exitPoints.get(laneNum).thisLane + ". is the best for reaching goal");
         parent.line(thatIntersection.exitPoints.get(laneNum).x,thatIntersection.exitPoints.get(laneNum).y,myTarget.x +thatIntersection.exitPoints.get(laneNum).thisLane.direction.get().x*10 ,myTarget.y + thatIntersection.exitPoints.get(laneNum).thisLane.direction.get().y*10);
         return laneNum;
     }
@@ -348,6 +349,9 @@ public class vehicle {
         //Logically our entrypoint must be the closest to our location or we would be driving on another lane.
         int Entry=getBestEntryFromIntersection(thatIntersection);
         int Exit= getBestExitFromIntersection(thatIntersection);
+        myLane = thatIntersection.entryPoints.get(Entry).thisLane;
+        myRoad = thatIntersection.entryPoints.get(Entry).thisRoad;
+        System.out.println("Setting mylane to: " + myLane.direction.toString());
         nextLane = thatIntersection.exitPoints.get(Exit).thisLane;
         nextRoad = thatIntersection.exitPoints.get(Exit).thisRoad;
         EntryPoint= new PVector(thatIntersection.entryPoints.get(Entry).x,thatIntersection.entryPoints.get(Entry).y);
@@ -367,6 +371,7 @@ public class vehicle {
         }
     }
     void useNextRoad(){
+        System.out.println("Called useNextRoad");
         myRoad=nextRoad;
         nextRoad=null;
         myLane=nextLane;
@@ -419,7 +424,7 @@ public class vehicle {
                     velocity.x = (float) (-1*angVelo*circleman.radius*Math.sin(circleman.angle));
                     velocity.y = (float) (angVelo*circleman.radius * Math.cos(circleman.angle));
                     findNextIntersection();
-                    useNextRoad();
+                    //useNextRoad();
                     myIntersectionPath=null;
 
 
@@ -428,15 +433,15 @@ public class vehicle {
             }else{
                 IntersectionStraightPath WeGoStraightNow = (IntersectionStraightPath) currentPath.subPath.get(0);
                 if (WeGoStraightNow!=null){
-                    location.x = WeGoStraightNow.x2;
-                    location.y = WeGoStraightNow.y2;
+                    //location.x = WeGoStraightNow.x2;
+                    //location.y = WeGoStraightNow.y2;
                     velocity =  new PVector(WeGoStraightNow.x2-WeGoStraightNow.x1,WeGoStraightNow.y2-WeGoStraightNow.y1);
                     velocity.setMag(maxSpeed);
                     System.out.println("We teleport a bit");
                     if(nextRoad!=null){
                         findNextIntersection();
                         //myIntersectionPath=getIntersectionPaths(currentIntersection);
-                        useNextRoad();
+                        //useNextRoad();
                         myIntersectionPath=null;
 
 
@@ -464,11 +469,12 @@ public class vehicle {
         //We find the intersection that has our nextRoad in it but isn't our current intersection
         for (int i=0;i<allIntersections.size();i++){
             if( allIntersections.get(i).connectedRoads.contains(nextRoad) && !allIntersections.get(i).equals(currentIntersection)){
-                System.out.println("Found next intersection");
-               // currentIntersection= allIntersections.get(i);
+                System.out.println("Found next intersection prev was:");
+                setIntersection(allIntersections.get(i));
                 return;
             }
         }
+
     }
 
     void applyForce(PVector force) {
@@ -519,14 +525,16 @@ public class vehicle {
             if (myIntersectionPath!=null){
                 //System.out.println(myIntersectionPath.subPath.get(0).getClass());
             }
-            if (nextRoad!=null && nextLane!=null){
-                //If we have a next road we should follow it.
-                useNextRoad();
-            }
             if (myRoad!=null && myLane!=null) {
                 //We're on a road so we follow that road.
                 followRoad(myRoad, myLane);
+            }else {
+                if (nextRoad != null && nextLane != null) {
+                    //If we have a next road we should follow it.
+                    useNextRoad();
+                }
             }
+
 
         }
         /*if (myRoad!=null && myLane!=null) {
@@ -540,7 +548,7 @@ public class vehicle {
     void setIntersection(intersection newIntersection){
         currentIntersection=newIntersection;
         myIntersectionPath= getIntersectionPaths(currentIntersection);
-        findNextIntersection();
+        //findNextIntersection();
 
     }
 
@@ -549,6 +557,7 @@ public class vehicle {
     void display() {
         // Draw a triangle rotated in the direction of velocity
         float theta = (float) (velocity.heading2D() + Math.PI / 2);
+
         if (myIntersectionPath!=null && myIntersectionPath.CircularPath!=null){
             intersectionCircle theCircularPath = myIntersectionPath.CircularPath;
             parent.line(theCircularPath.xStart,theCircularPath.yStart,theCircularPath.xEnd,theCircularPath.yEnd);

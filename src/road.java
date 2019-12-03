@@ -117,13 +117,7 @@ public class road {
         }
         PVector a = this.getStart().get();
         PVector b = this.getEnd().get();
-        if (drawAlongX){
-            //Negative X values go first
-            //Positive X values goes last
-        }else{
-            //Positive Y values goes first
-            //negative Y values goes last
-        }
+
         //System.out.println("A: " + a.toString() + ". B: " + b.toString());
         PVector ab = a.get().sub(b);
        // System.out.println("AB: " +ab.toString());
@@ -138,7 +132,7 @@ public class road {
 
                 if (drawAlongX){
 
-                    if (ab.x>0){
+                    if (ab.x<0){
                         index=0;
                     }else{
                         index=lanes.size();
@@ -148,7 +142,7 @@ public class road {
                 }else{
                     //Positive Y values goes first
                     //negative Y values goes last
-                    if (ab.y<0){
+                    if (ab.y>0){
                         index=0;
                     }else{
                         index=lanes.size();
@@ -159,7 +153,7 @@ public class road {
             }else{
                 if (drawAlongX){
 
-                    if (ba.x>0){
+                    if (ba.x<0){
                         index=0;
                     }else{
                         index=lanes.size();
@@ -169,7 +163,7 @@ public class road {
                 }else{
                     //Positive Y values goes first
                     //negative Y values goes last
-                    if (ba.y<0){
+                    if (ba.y>0){
                         index=0;
                     }else{
                         index=lanes.size();
@@ -244,7 +238,12 @@ public class road {
             //For a given road that has two lanes we have a dividing line between each lane.
             //So if we start our road from x-xDelta y-yDelta and then add our lanewidth for each lane.
             parent.line(points.get(0).x-xDelta+laneWx*i,points.get(0).y-yDelta+laneWy*i,points.get(1).x-xDelta+laneWx*i,points.get(1).y-yDelta+laneWy*i);
-
+            /*
+            Temp debug
+            parent.textSize(18);
+            parent.fill(0);
+            parent.text("Dir:" + lanes.get(i).direction.toString(),points.get(0).x-xDelta+laneWx*i,points.get(1).y-yDelta+laneWy*i);
+            */
         }
         //parent.line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);
 

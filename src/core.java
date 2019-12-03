@@ -13,7 +13,7 @@ public class core extends PApplet {
     ArrayList<vehicle> allCars = new ArrayList<vehicle>();
     int t,s;
     int lastInt=0;
-    int numVehicles = 1;
+    int numVehicles = 2;
     int numXRoads = 3;
     int numYRoads = 3;
     float intersectionWidth=75;

@@ -100,7 +100,7 @@ public class intersection {
                 testPoints.add(new PVector(laneMidX,laneMidY));
                 PVector laneDir = connectedRoads.get(i).lanes.get(j).direction;
                 float distX=oppositeX-laneMidX+laneDir.x,distY=oppositeY-laneMidY+laneDir.y;
-                if (Math.sqrt(distX*distX+distY*distY)<(Math.abs(x1-x2))){
+                if (Math.sqrt(distX*distX+distY*distY)>(Math.abs(x1-x2))){
                     //If the distance to the opposite point is getting smaller than the length of our intersection we are entering it
                     entryPoints.add(new intersectionConnectionPoint(laneMidX,laneMidY,connectedRoads.get(i).lanes.get(j),connectedRoads.get(i)));
                 }else{
@@ -141,14 +141,21 @@ public class intersection {
         for (int i=0;i<connectedRoads.size();i++){
             connectedRoads.get(i).display();
         }
+        /*
+        Debugging code for entries/exits.
+        parent.textSize(20);
         for (int i = 0; i<entryPoints.size();i++){
             parent.fill(0,255,0);
             parent.ellipse(entryPoints.get(i).x,entryPoints.get(i).y,5,5);
+            parent.text(entryPoints.get(i).thisLane.direction.x +"," + entryPoints.get(i).thisLane.direction.y ,entryPoints.get(i).x,entryPoints.get(i).y+20);
         }
         for (int i=0;i<exitPoints.size();i++){
             parent.fill(255,0,0);
             parent.ellipse(exitPoints.get(i).x,exitPoints.get(i).y,5,5);
+            parent.text(exitPoints.get(i).thisLane.direction.x +"," + exitPoints.get(i).thisLane.direction.y ,exitPoints.get(i).x,exitPoints.get(i).y-20);
         }
+        */
+
         /*for (int i=0;i<intersectionConnections.size();i++){
             for (int j=0;j<intersectionConnections.get(i).size();j++){
                 intersectionCircle circleman = intersectionConnections.get(i).get(j).CircularPath;
