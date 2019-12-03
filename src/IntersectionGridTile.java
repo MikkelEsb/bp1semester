@@ -10,5 +10,6 @@ public class IntersectionGridTile {
         if (start>endTime){
             //We can't start our reservation until
         }
+        return false;
     }
 }
