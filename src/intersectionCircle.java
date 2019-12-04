@@ -17,7 +17,7 @@ public class intersectionCircle {
         float deltaY=y2-y1;
         radius=Math.abs(deltaX);
         //angle= (float) Math.atan2(y2-centerY,x2-centerX);
-        angleEnd = (float) (Math.atan2(y2-centerY,x2-centerX));
+        angleEnd = (float) ((Math.atan2(y2-centerY,x2-centerX)));
         angleStart = (float) (Math.atan2(y1-centerY,x1-centerX));
         System.out.println("AngleStart :[" + angleStart + "] AngleEnd: [" + angleEnd + "]");
         angle= angleEnd-angleStart;
@@ -68,6 +68,7 @@ public class intersectionCircle {
         float angleLeft= (float) ( Math.atan2(y-centerY,x-centerX));
 
         float remainingLength= (Math.abs(angleEnd-angleLeft))*radius;
+        System.out.println("Angle End: " + angleEnd + ", AngleLeft: " + angleLeft);
         System.out.println("Remaining length: " + remainingLength + " angle: " + (angleEnd-angleLeft));
         return remainingLength;
     }

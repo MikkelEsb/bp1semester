@@ -13,7 +13,7 @@ public class core extends PApplet {
     ArrayList<vehicle> allCars = new ArrayList<vehicle>();
     int t,s;
     int lastInt=0;
-    int numVehicles = 2;
+    int numVehicles = 1;
     int numXRoads = 3;
     int numYRoads = 3;
     float intersectionWidth=75;
@@ -165,7 +165,7 @@ public class core extends PApplet {
         //lastInt=(lastInt+1)%allRoads.size();
         //allRoads.get(lastInt).display();
         for (int i=0;i<allIntersections.size();i++){
-           // allIntersections.get(i).display();
+            allIntersections.get(i).display();
         }
         /*for (int i=0;i<allRoads.size();i++){
             allRoads.get(i).display();

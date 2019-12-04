@@ -327,14 +327,16 @@ public class vehicle {
         int laneNum=-1;
         for (int i=0; i<thatIntersection.exitPoints.size();i++){
             PVector dirWithLoc = thatIntersection.exitPoints.get(i).thisLane.direction.get();
+            if (! thatIntersection.exitPoints.get(i).thisRoad.equals(myRoad)){
             dirWithLoc.setMag(maxSpeed*2);
             dirWithLoc.add(new PVector(thatIntersection.exitPoints.get(i).x,thatIntersection.exitPoints.get(i).y));
             //dirWithLoc.add(location);
             float tDist = dirWithLoc.dist(myTarget);
            // System.out.println("distance lane to target" + tDist + " for vector: " );
-            if (tDist<shortestDist){
+            if (tDist<shortestDist ){
                 shortestDist=tDist;
                 laneNum=i;
+            }
             }
         }
         if (laneNum==-1){
@@ -433,8 +435,8 @@ public class vehicle {
             }else{
                 IntersectionStraightPath WeGoStraightNow = (IntersectionStraightPath) currentPath.subPath.get(0);
                 if (WeGoStraightNow!=null){
-                    //location.x = WeGoStraightNow.x2;
-                    //location.y = WeGoStraightNow.y2;
+                    //location.x = WeGoStraightNow.x1;
+                    //location.y = WeGoStraightNow.y1;
                     velocity =  new PVector(WeGoStraightNow.x2-WeGoStraightNow.x1,WeGoStraightNow.y2-WeGoStraightNow.y1);
                     velocity.setMag(maxSpeed);
                     System.out.println("We teleport a bit");
@@ -557,7 +559,7 @@ public class vehicle {
     void display() {
         // Draw a triangle rotated in the direction of velocity
         float theta = (float) (velocity.heading2D() + Math.PI / 2);
-
+        /*
         if (myIntersectionPath!=null && myIntersectionPath.CircularPath!=null){
             intersectionCircle theCircularPath = myIntersectionPath.CircularPath;
             parent.line(theCircularPath.xStart,theCircularPath.yStart,theCircularPath.xEnd,theCircularPath.yEnd);
@@ -573,7 +575,7 @@ public class vehicle {
         if (currentIntersection!=null){
             int bestExit= getBestExitFromIntersection(currentIntersection);
             parent.circle(currentIntersection.exitPoints.get(bestExit).x,currentIntersection.exitPoints.get(bestExit).y,35);
-        }
+        }*/
         parent.fill(this.colour);
         parent.stroke(0);
         parent.strokeWeight(1);

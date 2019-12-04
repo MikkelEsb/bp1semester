@@ -125,7 +125,9 @@ public class intersection {
                     System.out.println("Hey hey");
                     intersectionConnections.add(i,new ArrayList<intersectionPath>());
                 }
+
                 intersectionConnections.get(i).add(j, new intersectionPath(entryPoints.get(i), exitPoints.get(j), 2f));
+
             }
         }
 
