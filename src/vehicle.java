@@ -18,7 +18,7 @@ public class vehicle {
     intersection currentIntersection;
     boolean needsRoad;
     float r = 4;
-    float maxSpeed = 1;
+    float maxSpeed = 2;
     float maxAcceleration = 0.05f;
     int score = 0;
     int colour = 177;
@@ -181,9 +181,9 @@ public class vehicle {
         predictLoc.mult(50);
         predictLoc.add(location);
         //System.out.println(predictLoc); //debugging
-        parent.fill(255);
-        parent.ellipse(a.x,a.y,20,20);
-        parent.ellipse(b.x,b.y,20,20);
+        //parent.fill(255);
+        //parent.ellipse(a.x,a.y,20,20);
+        //parent.ellipse(b.x,b.y,20,20);
         float adist=a.dist(location);
         float bdist=b.dist(location);
 
@@ -343,7 +343,7 @@ public class vehicle {
             System.out.println("Shiit man -1 laneNum");
         }
         //System.out.println("We think lane with dist " + shortestDist + ", and vector: " + thatIntersection.exitPoints.get(laneNum).thisLane + ". is the best for reaching goal");
-        parent.line(thatIntersection.exitPoints.get(laneNum).x,thatIntersection.exitPoints.get(laneNum).y,myTarget.x +thatIntersection.exitPoints.get(laneNum).thisLane.direction.get().x*10 ,myTarget.y + thatIntersection.exitPoints.get(laneNum).thisLane.direction.get().y*10);
+        //parent.line(thatIntersection.exitPoints.get(laneNum).x,thatIntersection.exitPoints.get(laneNum).y,myTarget.x +thatIntersection.exitPoints.get(laneNum).thisLane.direction.get().x*10 ,myTarget.y + thatIntersection.exitPoints.get(laneNum).thisLane.direction.get().y*10);
         return laneNum;
     }
     public intersectionPath getIntersectionPaths(intersection thatIntersection){
@@ -397,7 +397,7 @@ public class vehicle {
             if (circleman!=null) {
 
                 float length = circleman.getRemainingLength(location.x, location.y);
-                circleman.setAngularVelocityFromSpeed(1f);
+                circleman.setAngularVelocityFromSpeed(maxSpeed);
                 System.out.println("currentPath: " + length + "this turn has angle: " + circleman.angle + " and angVelo:" + circleman.getAngularVelocity());
                 velocity.setMag(maxSpeed);
 
@@ -406,14 +406,19 @@ public class vehicle {
                     float nextAngle = circleman.getNextAngle(location.x,location.y);
                     float angVelo= circleman.getAngularVelocity();
                     //We have more road than velocity so we just drive along the circle
-                    testingVar=(testingVar+1)%60;
-                    //location.x = circleman.xStart + (float) (circleman.radius*Math.cos(nextAngle));
-                    //location.y = circleman.yStart + (float) (circleman.radius*Math.sin(nextAngle));
+
+                    location.x = circleman.centerX + (float) (circleman.radius*Math.cos(nextAngle));
+                    location.y = circleman.centerY + (float) (circleman.radius*Math.sin(nextAngle));
                     parent.line(circleman.xStart,circleman.yStart,circleman.xEnd,circleman.yEnd);
                     parent.circle(circleman.centerX,circleman.centerY,circleman.radius/2);
                     velocity.x =   (float) (-1*angVelo*circleman.radius*Math.sin(nextAngle));
                     velocity.y =   (float) (angVelo*circleman.radius * Math.cos(nextAngle));
+                    velocity.setMag(0.01f);
                     //System.out.println("angVelo : " + angVelo + ", rad: " + circleman.radius + " sinAng: " +Math.sin(angVelo));
+                    float angleInDegree= (float) (nextAngle*360/(Math.PI*2));
+                    parent.text(angleInDegree,50,50);
+                    parent.text("dy: " + Math.floor(location.y-circleman.centerY) + " dx: " + Math.floor(location.x-circleman.centerX),50,70);
+                    parent.text( "Rem length " + length,250,50);
                     System.out.println("Next angle: " + nextAngle);
 
                 } else {

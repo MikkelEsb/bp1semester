@@ -13,7 +13,7 @@ public class core extends PApplet {
     ArrayList<vehicle> allCars = new ArrayList<vehicle>();
     int t,s;
     int lastInt=0;
-    int numVehicles = 1;
+    int numVehicles = 5;
     int numXRoads = 3;
     int numYRoads = 3;
     float intersectionWidth=75;
@@ -126,9 +126,9 @@ public class core extends PApplet {
         for (int i=0;i<numVehicles;i++){
             intersection spawnIntersection=allIntersections.get((int) random(0,allIntersections.size()));
             //road spawnRoad = spawnIntersection.connectedRoads.get((int) random(0,spawnIntersection.connectedRoads.size()));
-            road spawnRoad = spawnIntersection.entryPoints.get(1).thisRoad;
+            road spawnRoad = spawnIntersection.entryPoints.get(0).thisRoad;
             int entryPoint=0;
-            PVector spawnLoc = new PVector(spawnIntersection.entryPoints.get(entryPoint).x +spawnIntersection.entryPoints.get(entryPoint).thisLane.direction.x*60 ,spawnIntersection.entryPoints.get(entryPoint).y +spawnIntersection.entryPoints.get(entryPoint).thisLane.direction.y*60);
+            PVector spawnLoc = new PVector(spawnIntersection.entryPoints.get(entryPoint).x  ,spawnIntersection.entryPoints.get(entryPoint).y );
             //PVector spawnLoc = spawnRoad.getEnd();
             vehicle newVehicle = new vehicle(spawnLoc.x,spawnLoc.y,400,400);
             newVehicle.setRoad(spawnRoad,spawnIntersection.entryPoints.get(entryPoint).thisLane);
@@ -174,7 +174,7 @@ public class core extends PApplet {
             //allCars.get(i).run();
             //allCars.get(i).followIntersectionPath(allIntersections.get(5).intersectionConnections.get(1).get(0));
             fill(200,100,10);
-            allCars.get(i).currentIntersection.display();
+            //allCars.get(i).currentIntersection.display();
             allCars.get(i).run();
 
         }
